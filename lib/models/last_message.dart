@@ -21,12 +21,12 @@ class LastMessage extends Convo {
             isRead: isRead,
             timestamp: timestamp);
   factory LastMessage.fromFirestore(
-      Map<String, dynamic> document, ChatUser receiver) {
+      Map<String, dynamic> document, ChatUser receiver, String content) {
     return LastMessage(
         senderId: document['senderId'],
         receiverId: document['receiverId'],
         contentType: document['contentType'],
-        content: document['content'],
+        content: content,
         isRead: document['isRead'],
         timestamp: document['timestamp'],
         receiver: receiver

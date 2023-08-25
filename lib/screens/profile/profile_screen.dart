@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connect/utils/constants.dart';
 import 'package:connect/utils/services.dart';
@@ -70,12 +72,17 @@ class ProfileScreen extends StatelessWidget {
             TextButton(
                 style: TextButton.styleFrom(backgroundColor: shadePrimaryColor),
                 onPressed: () async {
-                  final isLoggedOut =
-                      await Provider.of<AuthProvider>(context, listen: false)
-                          .signOut();
-                  if (!isLoggedOut) {
-                    return;
+                  try {
+                    final isLoggedOut =
+                        await Provider.of<AuthProvider>(context, listen: false)
+                            .signOut();
+                    if (!isLoggedOut) {
+                      return;
+                    }
+                  } catch (e) {
+                    log(e.toString());
                   }
+
                   Navigator.of(context).popUntil((route) => false);
                   Navigator.of(context).pushNamed(LoginScreen.routeName);
                 },

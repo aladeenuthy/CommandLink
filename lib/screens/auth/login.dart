@@ -117,34 +117,13 @@ class _LoginScreenState extends State<LoginScreen> {
         const SizedBox(
           height: 10,
         ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: ElevatedButton(
-            onPressed: _loginWithGoogle,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                    height: 25,
-                    width: 50,
-                    child: Image.asset("assets/images/google_logo.png")),
-                const Text(
-                  "continue with google",
-                  style: TextStyle(color: Colors.white, fontSize: 17),
-                )
-              ],
-            ),
-            style: ElevatedButton.styleFrom(
-                primary: kPrimaryColor,
-                padding: const EdgeInsets.all(10),
-                elevation: 0),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
+      
         ElevatedButton(
           onPressed: _loginWithEmailAndPassword,
+          style: ElevatedButton.styleFrom(
+              primary: kPrimaryColor,
+              padding: const EdgeInsets.all(10),
+              elevation: 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
@@ -158,10 +137,6 @@ class _LoginScreenState extends State<LoginScreen> {
               Icon(Icons.arrow_right)
             ],
           ),
-          style: ElevatedButton.styleFrom(
-              primary: kPrimaryColor,
-              padding: const EdgeInsets.all(10),
-              elevation: 0),
         ),
         const SizedBox(
           height: 10,

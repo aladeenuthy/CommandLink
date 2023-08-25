@@ -8,12 +8,12 @@ class BodyContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.only(right: 12, left: 12, top: 20, bottom: 10),
       height: size,
       width: double.infinity,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40), topRight: Radius.circular(40)),
+            topLeft: Radius.circular(50), topRight: Radius.circular(50)),
         color: Colors.white,
       ),
       child: bodyContent,

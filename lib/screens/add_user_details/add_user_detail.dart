@@ -38,7 +38,7 @@ class _AddUserDetailsState extends State<AddUserDetails> {
   void _pickImage(ImageSource source) async {
     final ImagePicker _picker = ImagePicker();
     final image = await _picker.pickImage(
-        source: source, maxWidth: 150, imageQuality: 80);
+        source: source);
     if (image == null) {
       return;
     }
@@ -110,7 +110,7 @@ class _AddUserDetailsState extends State<AddUserDetails> {
                           backgroundColor: Colors.black,
                           child: IconButton(
                             onPressed: () {
-                              showImageOptions(_pickImage);
+                              showImageOptions(_pickImage, null);
                             },
                             icon: const Icon(
                               Icons.camera_alt,

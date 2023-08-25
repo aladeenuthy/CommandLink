@@ -25,9 +25,9 @@ class _MessageInputState extends State<MessageInput> {
   }
   
   void _pickImage(ImageSource source) async {
-    final ImagePicker _picker = ImagePicker();
-    final image = await _picker.pickImage(
-        source: source, maxWidth: 150, imageQuality: 80);
+    final ImagePicker picker = ImagePicker();
+    final image = await picker.pickImage(
+        source: source, );
     if (image == null) {
       return;
     }
@@ -74,7 +74,7 @@ class _MessageInputState extends State<MessageInput> {
               prefixIcon: IconButton(
                 onPressed: () {
                   FocusScope.of(context).unfocus();
-                  showImageOptions(_pickImage);
+                  showImageOptions(_pickImage, widget.receiver);
                 },
                 icon: const Icon(
                   Icons.add,

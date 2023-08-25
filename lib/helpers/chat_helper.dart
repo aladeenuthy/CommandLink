@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connect/helpers/encryption_helper.dart';
 import 'package:connect/helpers/helpers.dart';
 import 'package:connect/helpers/onesignal_helper.dart';
 import 'package:connect/models/last_message.dart';
@@ -14,8 +15,20 @@ class ChatHelper {
   // reference to the messages db and converting it to Message model type
   static CollectionReference<Message> _messagesRef(String convoId) {
     return _accessToDB.doc(convoId).collection('chats').withConverter<Message>(
-        fromFirestore: (snapshot, _) => Message.fromFirestore(
-            snapshot.data() as Map<String, dynamic>, snapshot.id),
+        fromFirestore: (snapshot, _) {
+          final message = snapshot.data()!;
+          final convoId = getConvoId(
+              FirebaseAuth.instance.currentUser!.uid,
+              FirebaseAuth.instance.currentUser!.uid == message['senderId']
+                  ? message['receiverId']
+                  : message['senderId']);
+          final content = message['contentType'] == "text"
+              ? EncryptionHelper.decryptMessage(
+                  token: convoId, msg: message['content'])
+              : message['content'];
+          return Message.fromFirestore(snapshot.data() as Map<String, dynamic>,
+              snapshot.id, content);
+        },
         toFirestore: (message, _) => message.toJson());
   }
 
@@ -39,7 +52,13 @@ class ChatHelper {
                           lastMessage['senderId']
                       ? lastMessage['receiverCred']
                       : lastMessage['senderCred']);
-              return LastMessage.fromFirestore(lastMessage, receiver);
+              final convoId = getConvoId(
+                  FirebaseAuth.instance.currentUser!.uid, receiver.userId);
+              final content = lastMessage['contentType'] == 'text'
+                  ? EncryptionHelper.decryptMessage(
+                      token: convoId, msg: lastMessage['content'])
+                  : lastMessage['content'];
+              return LastMessage.fromFirestore(lastMessage, receiver, content);
             }),
             toFirestore: (lastMessage, _) => lastMessage.toJson())
         .orderBy('last_message.timestamp', descending: true)
@@ -47,54 +66,73 @@ class ChatHelper {
   }
 
   // 2 types of message (image and text) , checks and process before pushing to firestore,also set that message as the last message and pushes notification
-  static Future<void> sendMessage(
+  static Future<bool> sendMessage(
       String content, String contentType, ChatUser receiver,
       [File? image]) async {
-    final convoId =
-        getConvoId(FirebaseAuth.instance.currentUser!.uid, receiver.userId);
-    if (contentType == 'image') {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('messages')
-          .child(convoId)
-          .child(image!.path.split("/").last);
-      await ref.putFile(image);
-      final imageUrl = await ref.getDownloadURL();
-      content = imageUrl;
+    try {
+      final convoId =
+          getConvoId(FirebaseAuth.instance.currentUser!.uid, receiver.userId);
+
+      if (contentType == 'image' || contentType == "encrypted") {
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('messages')
+            .child(convoId)
+            .child(image!.path.split("/").last);
+        await ref.putFile(image);
+        final imageUrl = await ref.getDownloadURL();
+        content = imageUrl;
+      } else {
+        final textContent = content;
+        content =
+            EncryptionHelper.encryptMessage(token: convoId, msg: textContent);
+      }
+      final message = Message(
+          id: '',
+          senderId: FirebaseAuth.instance.currentUser!.uid,
+          receiverId: receiver.userId,
+          contentType: contentType,
+          content: content,
+          isRead: false,
+          timestamp: Timestamp.now());
+
+      final currentUser = await UserHelper.getUser(FirebaseAuth
+          .instance
+          .currentUser!
+          .uid); // so when other user clicks notification it directly take user to view chat
+      final batch = FirebaseFirestore.instance.batch();
+      final docRef = _accessToDB.doc(convoId).collection('chats').doc();
+
+      final lastMessageJson = message.toJson();
+      lastMessageJson.addAll({
+        'senderCred': currentUser.toJson(),
+        'receiverCred': receiver.toJson()
+      });
+      // combining write operations to create documents at once
+      batch.set(docRef, message.toJson());
+      batch.set(_accessToDB.doc(convoId), {
+        'last_message': lastMessageJson,
+        'users': [message.senderId, message.receiverId]
+      });
+      await batch.commit();
+      await OneSignalHelper.sendPushNotification(
+          content: contentType == 'image' ? 'sent an image' : "message",
+          receiverDeviceToken: receiver.deviceToken,
+          userData: currentUser.toJson(),
+          bigPicture: contentType == 'image' ? content : '');
+      if (contentType == "encrypted") {
+        if (image!.existsSync()) {
+          image.deleteSync();
+        }
+      }
+      return true;
+    } on FirebaseAuthException catch (e) {
+      showSnackBar(e.message ?? "Something went wrong");
+      return false;
+    } catch (_) {
+      showSnackBar("Something went wrong");
+      return false;
     }
-    final message = Message(
-        id: '',
-        senderId: FirebaseAuth.instance.currentUser!.uid,
-        receiverId: receiver.userId,
-        contentType: contentType,
-        content: content,
-        isRead: false,
-        timestamp: Timestamp.now());
-
-    final currentUser = await UserHelper.getUser(FirebaseAuth
-        .instance
-        .currentUser!
-        .uid); // so when other user clicks notification it directly take user to view chat
-    final batch = FirebaseFirestore.instance.batch();
-    final docRef = _accessToDB.doc(convoId).collection('chats').doc();
-
-    final lastMessageJson = message.toJson();
-    lastMessageJson.addAll({
-      'senderCred': currentUser.toJson(),
-      'receiverCred': receiver.toJson()
-    });
-    // combining write operations to create documents at once
-    batch.set(docRef, message.toJson());
-    batch.set(_accessToDB.doc(convoId), {
-      'last_message': lastMessageJson,
-      'users': [message.senderId, message.receiverId]
-    });
-    await batch.commit();
-    await OneSignalHelper.sendPushNotification(
-        content: contentType == 'image' ? 'sent an image' : content,
-        receiverDeviceToken: receiver.deviceToken,
-        userData: currentUser.toJson(),
-        bigPicture: contentType == 'image' ? content : '');
   }
 
   static void markMessageAsRead(String convoId, String messageId) {

@@ -7,9 +7,17 @@
 //
 ![Alt text](assets/screenshots/chatscreen.png?raw=true "chatscreen")
 //
-![Alt text](assets/screenshots/viewchat.png?raw=true "View View chat1 screen")
+![Alt text](assets/screenshots/viewchat.png?raw=true "View chat1 screen")
 //
 ![Alt text](assets/screenshots/viewchat2.png?raw=true "View chat2 screen")
+//
+![Alt text](assets/screenshots/encodeMessage.png?raw=true "Encode Message screen")
+//
+![Alt text](assets/screenshots/encodedMessage.png?raw=true "Encode Message screen")
+//
+![Alt text](assets/screenshots/decodeMessage.png?raw=true "Decode Message screen")
+//
+![Alt text](assets/screenshots/decodedMessage.png?raw=true "Decode Message screen")
 //
 ![Alt text](assets/screenshots/profile.png?raw=true "profile screen")
 //

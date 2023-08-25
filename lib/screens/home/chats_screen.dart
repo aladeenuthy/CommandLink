@@ -43,7 +43,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Connect",
+                          Text("Command Link",
                               style: Theme.of(context).textTheme.headline1!),
                           GestureDetector(
                             onTap: () {

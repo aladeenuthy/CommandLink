@@ -22,9 +22,10 @@ class BaseAuthScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Image.asset('assets/images/logo2.png',
+                    color: kPrimaryColor,
                         cacheHeight: 80, cacheWidth: 60),
                       Text(
-                      "connect",
+                      "Command Link",
                       style: Theme.of(context).textTheme.headline1!.copyWith(color: kPrimaryColor),
                     )
                   ],

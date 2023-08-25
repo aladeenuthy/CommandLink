@@ -6,6 +6,8 @@ import 'package:connect/screens/auth/login.dart';
 import 'package:connect/screens/auth/signup.dart';
 import 'package:connect/screens/home/chats_screen.dart';
 import 'package:connect/screens/profile/profile_screen.dart';
+import 'package:connect/screens/view_chat/decode_message_screen.dart';
+import 'package:connect/screens/view_chat/encode_message_screen.dart';
 import 'package:connect/screens/view_chat/view_chat.dart';
 import 'package:connect/utils/constants.dart';
 import 'package:connect/helpers/key_helper.dart';
@@ -87,6 +89,16 @@ class MyApp extends StatelessWidget {
           } else if (settings.name == ProfileScreen.routeName) {
             return MaterialPageRoute(
                 settings: settings, builder: (ctx) => const ProfileScreen());
+          }
+          else if(settings.name == EncodeMessageScreen.routeName){
+             final value = settings.arguments as ChatUser;
+             return MaterialPageRoute(
+                settings: settings, builder: (ctx) =>  EncodeMessageScreen(receiver: value,));
+          }
+          else if(settings.name == DecodeMessageScreen.routeName){
+             final value = settings.arguments as Message;
+             return MaterialPageRoute(
+                settings: settings, builder: (ctx) =>  DecodeMessageScreen(message: value,));
           }
           return MaterialPageRoute(
               settings: settings, builder: (ctx) => const ChatsScreen());

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "931697931231",
+    "project_id": "strangr-85932",
+    "storage_bucket": "strangr-85932.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931697931231:android:f489a58f5615ef79454a6a",
+        "android_client_info": {
+          "package_name": "com.example.commandlink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931697931231-035eti2vh92svkk5lq89g3beqmgu8er5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpAlCj_1YY0mhC4neoEbLA1P_wRIbW3GQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931697931231-035eti2vh92svkk5lq89g3beqmgu8er5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "931697931231-vpgohp5smjr1jjkin1caohnproqaj263.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.connect"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,7 +11,8 @@ class Message extends Convo {
       required String contentType,
       required String content,
       required bool isRead,
-      required Timestamp timestamp})
+      required Timestamp timestamp,
+      })
       : super(
             senderId: senderId,
             receiverId: receiverId,
@@ -20,15 +21,15 @@ class Message extends Convo {
             isRead: isRead,
             timestamp: timestamp);
 
-  factory Message.fromFirestore(Map<String, dynamic> document, String id) {
+  factory Message.fromFirestore(
+      Map<String, dynamic> document, String id, String content) {
     return Message(
         id: id,
         senderId: document['senderId'],
         receiverId: document['receiverId'],
         contentType: document['contentType'],
-        content: document['content'],
+        content: content,
         isRead: document['isRead'],
         timestamp: document['timestamp']);
   }
-
 }

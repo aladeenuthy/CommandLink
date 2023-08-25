@@ -106,7 +106,6 @@ class AuthProvider  {
 
   Future<bool> signOut() async {
     try {
-      await _googleSignIn.disconnect();
       await auth.signOut();
       return true;
     } on FirebaseAuthException catch (e) {
